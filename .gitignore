@@ -1,0 +1,62 @@
+# =============== #
+# Unity generated #
+# =============== #
+Temp/
+Obj/
+UnityGenerated/
+Library/
+Builds/
+Builds/*
+Builds*
+Assets/AssetStoreTools*
+*.apk
+
+
+# ===================================== #
+# Visual Studio / MonoDevelop generated #
+# ===================================== #
+ExportedObj/
+*.svd
+*.userprefs
+*.csproj
+*.pidb
+*.suo
+*.sln
+*.user
+*.unityproj
+*.booproj
+
+# ============ #
+# OS generated #
+# ============ #
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Icon?
+ehthumbs.db
+Thumbs.db
+Arkanoid.apk
+
+
+# ============ #
+# Git Kraken   #
+# ============ #
+*~Stashed\ changes
+*~Stashed\ changes.meta
+*~Updated\ upstream
+*~Updated\ upstream.meta
+
+
+# ============ #
+#    Manual    #
+# ============ #
+/Assets/Resources/Data/Save/Map.json
+/Assets/Resources/Data/Save/Map.json.met	
+
+
+# Rider project files
+.idea
+/fmod.log
+/fmod_editor.log
