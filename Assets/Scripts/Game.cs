@@ -1,5 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Client.Network;
+using Client.Network.PackageHandlers;
+using Shared.DataPackages.Server;
 using Shared.POCO;
 using UnityEngine;
 
@@ -7,9 +10,7 @@ namespace Client
 {
     public class Game : MonoBehaviour
     {
-        [SerializeField] private int _startWidth;
-        [SerializeField] private int _startHeight;
-
+        [SerializeField] private GameState _gameState;
         [SerializeField] private Transform _cellsContainer;
         [SerializeField] private Transform _unitsContainer;
 
@@ -18,9 +19,11 @@ namespace Client
         [SerializeField] private UnitComponent _unitPrefab;
 
         [SerializeField] private GameObject _mainUI;
+        [SerializeField] private GameObject _loadingUI;
         [SerializeField] private GameObject _levelUI;
 
         [SerializeField] private UnitSelectionComponent _unitSelectionComponent;
+        [SerializeField] private NetworkClient _networkClient;
 
         private readonly List<CellComponent> _cells = new List<CellComponent>();
         private readonly List<UnitComponent> _units = new List<UnitComponent>();
@@ -28,34 +31,27 @@ namespace Client
         private readonly Queue<CellComponent> _cellsQueue = new Queue<CellComponent>();
         private readonly Queue<UnitComponent> _unitsQueue = new Queue<UnitComponent>();
 
-        private bool _isPlay;
+        private readonly Queue<ServerPackage> _packages = new Queue<ServerPackage>();
+
+        public NetworkClient Client { get { return _networkClient; } }
 
         #region UI event handlers
 
         public void Play()
         {
-            _isPlay = true;
-
-            Unit[] units = new Unit[3];
-            for (int i = 0; i < units.Length; i++)
-            {
-                units[i] = new Unit
-                {
-                    Id = i + 1,
-                    Position = new Position { X = i + 1, Y = 2 + i }
-                };
-            }
-
-            Init(_startWidth, _startHeight, units);
+            _networkClient.Connect();
+            _gameState = GameState.Loading;
             UpdateUI();
         }
 
         public void ExitLevel()
         {
-            _isPlay = false;
             ClereScene();
-            UpdateUI();
             _unitSelectionComponent.IsEnable = false;
+            _networkClient.Disconnect();
+
+            _gameState = GameState.MainMenu;
+            UpdateUI();
         }
 
         public void CloseGame()
@@ -65,7 +61,12 @@ namespace Client
 
         #endregion
 
-        private void Init(int width, int height, Unit[] units)
+        public void SetPackage(ServerPackage package)
+        {
+            _packages.Enqueue(package);
+        }
+
+        public void Init(int width, int height, Unit[] units)
         {
             for (int i = 0; i < width; i++)
             {
@@ -98,6 +99,9 @@ namespace Client
 
             _unitSelectionComponent.IsEnable = true;
             _unitSelectionComponent.Init(_units);
+
+            _gameState = GameState.Play;
+            UpdateUI();
         }
 
         private void ClereScene()
@@ -117,13 +121,32 @@ namespace Client
 
         private void Start()
         {
+            _gameState = GameState.MainMenu;
             UpdateUI();
+        }
+
+        private void Update()
+        {
+            if (_packages.Any())
+            {
+                var package = _packages.Dequeue();
+                var packageHandler = PackageHandler.GetPackageHandler(this, package);
+                if (packageHandler != null)
+                {
+                    packageHandler.HandlePackage();
+                }
+                else
+                {
+                    Debug.LogWarning("Package handler are not found for package " + package.Type);
+                }
+            }
         }
 
         private void UpdateUI()
         {
-            _mainUI.SetActive(!_isPlay);
-            _levelUI.SetActive(_isPlay);
+            _mainUI.SetActive(_gameState == GameState.MainMenu);
+            _loadingUI.SetActive(_gameState == GameState.Loading);
+            _levelUI.SetActive(_gameState == GameState.Play);
         }
     }
 }

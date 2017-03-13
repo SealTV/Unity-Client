@@ -11,36 +11,34 @@ namespace Client
         [SerializeField]
         private PingPackage _pingPackage;
         [SerializeField]
-        private bool _isConnected;
-        [SerializeField]
         private int value;
 
 
 
         private Socket s;
 
-        private void Start()
-        {
-            _pingPackage = new PingPackage {Value = 10};
-            Debug.Log(_pingPackage.Value);
-            Debug.Log(_pingPackage.Type);
-        }
+//        private void Start()
+//        {
+//            _pingPackage = new PingPackage {Value = 10};
+//            Debug.Log(_pingPackage.Value);
+//            Debug.Log(_pingPackage.Type);
+//        }
 
-        private void Update()
-        {
-            _isConnected = s != null && s.Connected;
-
-            if (Input.GetKeyUp(KeyCode.A))
-            {
-                Connect();
-            }
-
-            if (Input.GetKeyUp(KeyCode.T) && _isConnected)
-            {
-                SendPacket();
-            }
-
-        }
+//        private void Update()
+//        {
+//            _isConnected = s != null && s.Connected;
+//
+//            if (Input.GetKeyUp(KeyCode.A))
+//            {
+//                Connect();
+//            }
+//
+//            if (Input.GetKeyUp(KeyCode.T) && _isConnected)
+//            {
+//                SendPacket();
+//            }
+//
+//        }
 
         private NetworkStream _stream;
 

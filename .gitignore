@@ -10,6 +10,12 @@ Library*
 Builds/
 Builds/*
 Builds*
+/Library/
+/Library/*
+/Library*
+/Builds/
+/Builds/*
+/Builds*
 Assets/AssetStoreTools*
 *.apk
 
@@ -62,3 +68,4 @@ Arkanoid.apk
 .idea
 /fmod.log
 /fmod_editor.log
+Build/
