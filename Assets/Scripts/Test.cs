@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using Shared.Packages.Client;
+using Shared.DataPackages.Client;
 using UnityEngine;
 
 namespace Client
