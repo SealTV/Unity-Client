@@ -70,6 +70,10 @@ namespace Client
 
         public void Init(int width, int height, Unit[] units)
         {
+            var containerPosition = new Vector3((1 - width) * _cellOffset / 2f, 0, (1 - height) * _cellOffset / 2f);
+            _cellsContainer.localPosition = containerPosition;
+            _unitsContainer.localPosition = containerPosition;
+
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)

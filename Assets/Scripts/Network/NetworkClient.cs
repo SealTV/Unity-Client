@@ -26,6 +26,12 @@ namespace Client.Network
         private int _count = 1024;
         private readonly ServerPackageFactory _factory = new ServerPackageFactory();
 
+        private void OnDisable()
+        {
+            if (_tcpClient != null && _tcpClient.Connected)
+                Disconnect();
+        }
+
         public void Connect()
         {
             _tcpClient = new TcpClient();

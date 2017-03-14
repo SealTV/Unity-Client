@@ -235,9 +235,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _selectionCircle: {fileID: 1000012696060730}
+  _id: 0
   _isMove: 0
   _target: {x: 0, y: 0, z: 0}
-  _speed: 10
+  _speed: 30
 --- !u!119 &119000011656179260
 Projector:
   m_ObjectHideFlags: 1

@@ -8,6 +8,9 @@ namespace Client
         [SerializeField] private float _rotationSpeed = 4f;
         [SerializeField] private float _smoothness = 0.85f;
 
+        [SerializeField] private Vector3 _minPositon;
+        [SerializeField] private Vector3 _maxPosition;
+
         private Vector3 _targetPosition;
 
         [SerializeField] private Quaternion _targetRotation;
@@ -16,7 +19,7 @@ namespace Client
 
         private void Start()
         {
-            _targetPosition = transform.position;
+            _targetPosition = transform.localPosition;
             _targetRotation = transform.rotation;
 
             _targetRotationX = transform.localRotation.eulerAngles.x;
@@ -48,7 +51,11 @@ namespace Client
             else
                 Cursor.visible = true;
 
-            transform.position = Vector3.Lerp( transform.position, _targetPosition, ( 1.0f - _smoothness ) );
+            _targetPosition = new Vector3(
+                Mathf.Clamp(_targetPosition.x, _minPositon.x, _maxPosition.x),
+                Mathf.Clamp(_targetPosition.y, _minPositon.y, _maxPosition.y),
+                Mathf.Clamp(_targetPosition.z, _minPositon.z, _maxPosition.z));
+            transform.localPosition = Vector3.Lerp( transform.localPosition, _targetPosition, ( 1.0f - _smoothness ) );
             transform.rotation = Quaternion.Lerp( transform.rotation, _targetRotation, ( 1.0f - _smoothness ) );
         }
     }
