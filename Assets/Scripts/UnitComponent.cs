@@ -3,12 +3,14 @@ using UnityEngine;
 
 namespace Client
 {
+    [RequireComponent(typeof(Animator))]
     public class UnitComponent : MonoBehaviour
     {
-        public event Action<UnitComponent> OnClick = delegate {};
+        private const string MoveAnimationKey = "IsMove";
 
-        [SerializeField]
-        private GameObject _selectionCircle;
+        public event Action<UnitComponent> OnClick = delegate { };
+
+        [SerializeField] private GameObject _selectionCircle;
 
         [SerializeField] private bool _isMove;
         [SerializeField] private Vector3 _target;
@@ -16,6 +18,8 @@ namespace Client
 
         private bool _isSelected;
         private Transform _transform;
+
+        private Animator _animator;
 
         public bool IsSelected
         {
@@ -32,6 +36,11 @@ namespace Client
             get { return _transform ?? (_transform = transform); }
         }
 
+        private Animator Animator
+        {
+            get { return _animator ?? (_animator = GetComponent<Animator>()); }
+        }
+
         private void Start()
         {
             IsSelected = false;
@@ -42,6 +51,7 @@ namespace Client
             _target = target;
             Transform.localRotation = Quaternion.LookRotation(_target - Transform.localPosition);
             _isMove = true;
+            Animator.SetBool(MoveAnimationKey, _isMove);
         }
 
         public void Update()
@@ -52,17 +62,18 @@ namespace Client
             }
 
             Debug.DrawRay(Transform.position, Transform.forward * 10, Color.green);
-            if(!_isMove)
+            if (!_isMove)
                 return;
+
 
             Transform.localPosition = Vector3.MoveTowards(Transform.localPosition, _target, _speed * Time.deltaTime);
 
             if (Transform.localPosition == _target)
             {
                 _isMove = false;
+                Animator.SetBool(MoveAnimationKey, _isMove);
             }
         }
-
 
         private void OnMouseUpAsButton()
         {
