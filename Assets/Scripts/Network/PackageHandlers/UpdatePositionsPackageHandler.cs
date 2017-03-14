@@ -1,4 +1,5 @@
-﻿using Shared.DataPackages.Server;
+﻿using System.Linq;
+using Shared.DataPackages.Server;
 
 namespace Client.Network.PackageHandlers
 {
@@ -13,8 +14,9 @@ namespace Client.Network.PackageHandlers
             UpdatePositionsPackage positionsPackage = (UpdatePositionsPackage) Package;
             foreach (var unit in positionsPackage.Units)
             {
-                var unitComponent = Game.Units.Find(u => u.Unit.Id == unit.Id);
-                unitComponent.Unit = unit;
+                var unitComponent = Game.Units.FirstOrDefault(u => u.Unit.Id == unit.Id);
+                if(unitComponent != null)
+                    unitComponent.Unit = unit;
             }
         }
     }
