@@ -2,6 +2,7 @@
 using System.Linq;
 using Client.Network;
 using Client.Network.PackageHandlers;
+using Shared.DataPackages.Client;
 using Shared.DataPackages.Server;
 using Shared.POCO;
 using UnityEngine;
@@ -34,6 +35,7 @@ namespace Client
         private readonly Queue<ServerPackage> _packages = new Queue<ServerPackage>();
 
         public NetworkClient Client { get { return _networkClient; } }
+        public List<UnitComponent> Units { get { return _units; } }
 
         #region UI event handlers
 
@@ -79,7 +81,20 @@ namespace Client
                     cell.Init(i, j);
                     cell.OnClick += (x, y) =>
                     {
-                        Debug.LogFormat("Click on x: {0}, y: {1}", x, y);
+                        if (Units.Any(u => u.IsSelected))
+                        {
+                            Position position = new Position(x, y);
+                            var selectedUnits = Units.Where(u => u.IsSelected).Select(u => u.Unit).ToArray();
+                            foreach (var selectedUnit in selectedUnits)
+                            {
+                                selectedUnit.TargetPosition = position;
+                            }
+
+                            Client.SendPackage(new SetTargetsPackage
+                            {
+                                Units = selectedUnits
+                            });
+                        }
                     };
 
                     _cells.Add(cell);
@@ -93,7 +108,7 @@ namespace Client
                 unit.gameObject.SetActive(true);
                 unit.Transform.SetParent(_unitsContainer);
                 unit.Transform.localPosition = new Vector3(units[i].Position.X * _cellOffset, 0, units[i].Position.Y * _cellOffset);
-
+                unit.Init(units[i]);
                 _units.Add(unit);
             }
 
@@ -111,12 +126,16 @@ namespace Client
                 cell.gameObject.SetActive(false);
                 _cellsQueue.Enqueue(cell);
             }
+            _cells.Clear();
 
             foreach (var unit in _units)
             {
+                unit.Reset();
                 unit.gameObject.SetActive(false);
                 _unitsQueue.Enqueue(unit);
             }
+
+            _units.Clear();
         }
 
         private void Start()

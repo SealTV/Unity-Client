@@ -10,7 +10,12 @@ namespace Client.Network.PackageHandlers
 
         public override void HandlePackage()
         {
-            throw new System.NotImplementedException();
+            UpdatePositionsPackage positionsPackage = (UpdatePositionsPackage) Package;
+            foreach (var unit in positionsPackage.Units)
+            {
+                var unitComponent = Game.Units.Find(u => u.Unit.Id == unit.Id);
+                unitComponent.Unit = unit;
+            }
         }
     }
 }

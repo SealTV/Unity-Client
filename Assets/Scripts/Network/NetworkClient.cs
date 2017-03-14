@@ -55,14 +55,22 @@ namespace Client.Network
         public void SendPackage(ClientPackage package)
         {
             var data = package.ToByteArray();
-            Debug.Log(string.Join(", ", data.Select(b => b.ToString()).ToArray()));
-            _stream.BeginWrite(data, 0, data.Length, SendCallback, package);
+            try
+            {
+                _stream.BeginWrite(data, 0, data.Length, SendCallback, package);
+            }
+            catch (NullReferenceException e)
+            {
+                
+            }
+            catch (IOException e)
+            {
+            }
         }
 
         private void SendCallback(IAsyncResult ar)
         {
             var package = (ClientPackage) ar .AsyncState;
-            Debug.LogFormat("Send: {0}", package.Type);
 
             if (package.Type == ClientPackageType.ExitFromRoom)
             {

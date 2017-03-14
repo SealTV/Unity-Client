@@ -1,5 +1,4 @@
 ﻿using Shared.DataPackages.Server;
-using UnityEngine;
 
 namespace Client.Network.PackageHandlers
 {
@@ -12,7 +11,6 @@ namespace Client.Network.PackageHandlers
         {
             Game = game;
             Package = package;
-            Debug.LogFormat("Package received: {0}", Package.Type);
         }
 
         public abstract void HandlePackage();

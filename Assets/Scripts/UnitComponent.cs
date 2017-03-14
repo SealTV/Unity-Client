@@ -1,4 +1,5 @@
 ﻿using System;
+using Shared.POCO;
 using UnityEngine;
 
 namespace Client
@@ -12,6 +13,7 @@ namespace Client
 
         [SerializeField] private GameObject _selectionCircle;
 
+        [SerializeField] private int _id;
         [SerializeField] private bool _isMove;
         [SerializeField] private Vector3 _target;
         [SerializeField] private float _speed;
@@ -41,6 +43,18 @@ namespace Client
             get { return _animator ?? (_animator = GetComponent<Animator>()); }
         }
 
+        private Unit _unit;
+
+        public Unit Unit
+        {
+            get { return _unit; }
+            set
+            {
+                _unit = value;
+                MoveToTarget(new Vector3(value.PositionF.X, 0, value.PositionF.Y));
+            }
+        }
+
         private void Start()
         {
             IsSelected = false;
@@ -49,35 +63,39 @@ namespace Client
         private void MoveToTarget(Vector3 target)
         {
             _target = target;
-            Transform.localRotation = Quaternion.LookRotation(_target - Transform.localPosition);
             _isMove = true;
             Animator.SetBool(MoveAnimationKey, _isMove);
         }
 
-        public void Update()
+        private void Update()
         {
-            if (Input.GetKeyUp(KeyCode.P))
-            {
-                MoveToTarget(_target);
-            }
-
-            Debug.DrawRay(Transform.position, Transform.forward * 10, Color.green);
+            Animator.SetBool(MoveAnimationKey, Unit.State == States.Move);
             if (!_isMove)
                 return;
-
 
             Transform.localPosition = Vector3.MoveTowards(Transform.localPosition, _target, _speed * Time.deltaTime);
 
             if (Transform.localPosition == _target)
             {
                 _isMove = false;
-                Animator.SetBool(MoveAnimationKey, _isMove);
             }
         }
 
         private void OnMouseUpAsButton()
         {
             OnClick(this);
+        }
+
+        public void Init(Unit unit)
+        {
+            _id = unit.Id;
+            _unit = unit;
+        }
+
+        public void Reset()
+        {
+            _isMove = false;
+            Animator.SetBool(MoveAnimationKey, _isMove);
         }
     }
 }
